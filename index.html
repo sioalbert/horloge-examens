@@ -147,27 +147,29 @@
       align-items: center;
       width: 4.8em;
     }
+    .seconds-container {
+      display: inline-flex;
+      align-items: center;
+      margin-left: 0.1em;
+    }
+    .time-part-black, .time-part-gray, .time-part-lightgray {
+      font-family: 'Montserrat', sans-serif;
+      display: inline-block;
+      width: 1.4em;
+      text-align: center;
+    }
     .time-part-black {
       color: #2e2e2e;
-      display: inline-block;
-      width: 1.2em;
-      text-align: center;
-      margin-right: 0.05em;
+      margin-right: 0.10em;
     }
     .time-part-gray {
       color: #666666;
-      display: inline-block;
-      width: 1.2em;
-      text-align: center;
       margin-left: 0.10em;
+      margin-right: 0.10em;
     }
     .time-part-lightgray {
       color: #c6c5c5;
-      display: inline-block;
-      width: 1.2em;
-      text-align: center;
       margin-left: 0.10em;
-      margin-right: 0.20em;
     }
     .colon {
       color: #666666;
@@ -395,6 +397,8 @@
           <span class="colon">:</span>
           <span class="time-part-gray">${minutes}</span>
           <span class="colon">:</span>
+        </div>
+        <div class="seconds-container">
           <span class="time-part-lightgray">${seconds}</span>
         </div>
       `;
