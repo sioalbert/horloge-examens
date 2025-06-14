@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Horloge Examens (OALBERT)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background: #ffffff;
+      color: #2e2e2e;
+      user-select: none;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .hidden { display: none; }
+    .input-form, .clock-display {
+      padding: 2rem;
+      max-width: 1000px;
+      margin: auto;
+    }
+    .input-form {
+      padding: 2rem;
+      max-width: 1000px;
+      margin: auto;
+      border: 1px solid #228be6;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      background: white;
+    }
+    .input-form h1 {
+      color: #228be6;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .input-form input, .input-form label {
+      display: block;
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+      width: 100%;
+    }
+    .form-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 2rem;
+      margin-bottom: 1.5rem;
+    }
+    .form-row div {
+      flex: 1;
+    }
+    .input-form input {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1.1rem;
+      color: #228be6;
+      text-transform: uppercase;
+    }
+    .input-form input::placeholder {
+      color: #999;
+      text-transform: none;
+    }
+    .input-form input:focus {
+      outline: none;
+      border-color: #228be6;
+    }
+    .error-message {
+      color: rgba(255, 0, 0, 0.687);
+      display: none;
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+    }
+    .clock-display {
+      display: none;
+    }
+    .clock-display.visible {
+      display: block;
+    }
+    .banner {
+      font-size: 1.2rem;
+      padding: 1.5rem;
+      text-align: left;
+      border: 1px solid #ccc;
+      margin-bottom: 2rem;
+    }
+    .banner-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.5rem;
+      position: relative;
+      min-height: 100px;
+    }
+    .banner-col {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      margin-bottom: -0.25rem;
+    }
+    .banner-col:nth-child(2n) {
+      grid-column: 2;
+    }
+    .banner-col:nth-child(2n+1) {
+      grid-column: 1;
+    }
+    .session-col {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      margin-bottom: 0;
+    }
+    .banner .label {
+      color: #2e2e2e;
+      font-weight: bold;
+      margin-right: 0.5rem;
+    }
+    .banner .value {
+      color: #228be6;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+    .clock-container {
+      background-color: white;
+      padding: 1rem;
+      border-radius: 0px;
+      width: 800px;
+      margin: 0 auto;
+    }
+    .clock {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 12rem;
+      font-weight: 600;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      letter-spacing: 0.05em;
+      color: #2e2e2e;
+      width: 100%;
+      min-width: 700px;
+    }
+    .main-time {
+      display: inline-flex;
+      align-items: center;
+      width: 4.8em;
+    }
+    .time-part-black {
+      color: #2e2e2e;
+      display: inline-block;
+      width: 1.2em;
+      text-align: center;
+      margin-right: 0.05em;
+    }
+    .time-part-gray {
+      color: #666666;
+      display: inline-block;
+      width: 1.2em;
+      text-align: center;
+      margin-left: 0.10em;
+    }
+    .time-part-lightgray {
+      color: #c6c5c5;
+      display: inline-block;
+      width: 1.2em;
+      text-align: center;
+      margin-left: 0.10em;
+
+    }
+    .colon {
+      color: #666666;
+      transition: opacity 0.5s;
+      display: inline-block;
+      width: 0.2em;
+      text-align: center;
+    }
+    .status, .remaining {
+      font-size: 2rem;
+      margin-top: 1.5rem;
+      font-weight: 400;
+      text-align: center;
+    }
+    .remaining span.overtime {
+      color: rgba(255, 0, 0, 0.687);
+      display: block;
+      margin-top: 2rem;
+      text-align: center;
+    }
+    button {
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      background: #228be6;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #1a6fc4;
+    }
+    footer {
+      position: absolute;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+      font-size: 0.8rem;
+      color: #888;
+    }
+    .button-container {
+      margin-top: 2rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body oncontextmenu="alert('Il n\u2019est pas encore l\u2019heure... ;-)'); return false;" onkeydown="handleKeydown(event);">
+  <div class="input-form" id="inputForm">
+    <h1>Horloge numérique pour les EXAMENS</h1>
+    <div class="form-row">
+      <div><label>Concours / Examen : <input id="examen" placeholder="Ex: BTS SIO" required /></label></div>
+      <div><label>Section / Spécialité / Série : <input id="section" placeholder="Ex: Option SLAM" required /></label></div>
+    </div>
+    <div class="form-row">
+      <div><label>Epreuve : <input id="epreuve" placeholder="Ex: E7" required /></label></div>
+      <div><label>Matière : <input id="matiere" placeholder="Ex: Cybersécurité" required /></label></div>
+    </div>
+    <div class="form-row">
+      <div><label>Heure de début (HH:MM) : <input id="debut" type="time" required /></label></div>
+      <div><label>Heure de fin (HH:MM) : <input id="fin" type="time" required /></label></div>
+    </div>
+    <div class="form-row">
+      <div><label>Durée de la mise en loge (en minutes) : <input id="loge" type="number" value="0" min="0" /></label></div>
+    </div>
+    <div class="error-message" id="timeError">L'heure de fin doit être supérieure à celle de début</div>
+    <div class="error-message" id="logeError">La mise en loge ne peut pas être plus longue que l'épreuve</div>
+    <div class="error-message" id="requiredTimeError">Saisir au moins l'heure de début et de fin</div>
+    <div class="button-container">
+      <button id="startButton" onclick="validateAndStart();">Démarrer le plein écran</button>
+    </div>
+  </div>
+
+  <div class="clock-display hidden" id="clockDisplay">
+    <div class="banner">
+      <div class="banner-grid">
+        <div class="banner-col"><span class="label">Concours / Examen :</span><span class="value" id="bannerExamen"></span></div>
+        <div class="banner-col"><span class="label">Section / Spécialité / Série :</span><span class="value" id="bannerSection"></span></div>
+        <div class="banner-col"><span class="label">Epreuve :</span><span class="value" id="bannerEpreuve"></span></div>
+        <div class="banner-col"><span class="label">Matière :</span><span class="value" id="bannerMatiere"></span></div>
+        <div class="banner-col session-col"><span class="label">Session :</span><span class="value" id="bannerSession"></span></div>
+      </div>
+    </div>
+    <div class="clock-container">
+      <div class="clock" id="currentTime"></div>
+    </div>
+    <div class="status" id="status"></div>
+    <div class="remaining" id="remaining"></div>
+  </div>
+
+  <footer>
+     © 2025 Codé par l'IA à 99%, sous la direction fonctionnelle et artistique du prompteur (ex-développeur) Olivier de Sérignan, qui a quand même eu la bonne idée d'aider les candidats et ses chers collègues avec cette petite appli Ô combien utile ;-)
+  </footer>
+
+  <script>
+    let startTime, endTime, logeMinutes;
+    let interval;
+    let showColon = true;
+
+    function checkRequiredFields() {
+      const debut = document.getElementById('debut').value;
+      const fin = document.getElementById('fin').value;
+      const startButton = document.getElementById('startButton');
+      
+      // Le bouton est activé uniquement si les heures de début et de fin sont saisies
+      startButton.disabled = !(debut && fin);
+    }
+
+    // Ajouter les écouteurs d'événements pour les champs d'heure
+    document.addEventListener('DOMContentLoaded', function() {
+      const timeInputs = ['debut', 'fin'];
+      timeInputs.forEach(id => {
+        document.getElementById(id).addEventListener('input', checkRequiredFields);
+      });
+    });
+
+    function exitFullScreen() {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.mozCancelFullScreen) {
+        document.mozCancelFullScreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+      }
+    }
+
+    function validateAndStart() {
+      const debut = document.getElementById('debut').value;
+      const fin = document.getElementById('fin').value;
+
+      // Vérifier si les heures sont saisies
+      if (!debut || !fin) {
+        document.getElementById('requiredTimeError').style.display = 'block';
+        return;
+      }
+      document.getElementById('requiredTimeError').style.display = 'none';
+
+      const [dH, dM] = debut.split(':').map(Number);
+      const [fH, fM] = fin.split(':').map(Number);
+      const now = new Date();
+      const start = new Date(now);
+      const end = new Date(now);
+      start.setHours(dH, dM, 0);
+      end.setHours(fH, fM, 0);
+      const logeVal = parseInt(document.getElementById('loge').value, 10) || 0;
+      const totalExamMinutes = (end - start) / 60000;
+
+      // Réinitialiser les messages d'erreur
+      document.getElementById('timeError').style.display = 'none';
+      document.getElementById('logeError').style.display = 'none';
+
+      if (end <= start) {
+        document.getElementById('timeError').style.display = 'block';
+        return;
+      }
+
+      if (logeVal > totalExamMinutes) {
+        document.getElementById('logeError').style.display = 'block';
+        return;
+      }
+
+      startClock();
+      launchFullScreen();
+    }
+
+    function startClock() {
+      const examen = document.getElementById('examen').value.toUpperCase();
+      const section = document.getElementById('section').value.toUpperCase();
+      const epreuve = document.getElementById('epreuve').value.toUpperCase();
+      const matiere = document.getElementById('matiere').value.toUpperCase();
+      const debut = document.getElementById('debut').value;
+      const fin = document.getElementById('fin').value;
+      logeMinutes = parseInt(document.getElementById('loge').value, 10) || 0;
+
+      const now = new Date();
+      const [dH, dM] = debut.split(':').map(Number);
+      const [fH, fM] = fin.split(':').map(Number);
+      startTime = new Date(now);
+      startTime.setHours(dH, dM, 0);
+      endTime = new Date(now);
+      endTime.setHours(fH, fM, 0);
+
+      document.getElementById('bannerExamen').textContent = examen;
+      document.getElementById('bannerSection').textContent = section;
+      document.getElementById('bannerEpreuve').textContent = epreuve;
+      document.getElementById('bannerMatiere').textContent = matiere;
+      document.getElementById('bannerSession').textContent = now.getFullYear();
+
+      document.getElementById('inputForm').style.display = 'none';
+      document.getElementById('clockDisplay').classList.add('visible');
+
+      interval = setInterval(updateClock, 1000);
+    }
+
+    function launchFullScreen() {
+      const docElm = document.documentElement;
+      if (docElm.requestFullscreen) {
+        docElm.requestFullscreen();
+      } else if (docElm.mozRequestFullScreen) {
+        docElm.mozRequestFullScreen();
+      } else if (docElm.webkitRequestFullScreen) {
+        docElm.webkitRequestFullScreen();
+      } else if (docElm.msRequestFullscreen) {
+        docElm.msRequestFullscreen();
+      }
+    }
+
+    function handleKeydown(e) {
+      if ((e.key === 'Escape') || (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'f')) {
+        alert("Pas si vite ! Sortez de la salle si vous voulez quitter le plein écran.");
+        e.preventDefault();
+      }
+    }
+
+    function updateClock() {
+      const now = new Date();
+      const hours = now.getHours().toString().padStart(2, '0');
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      const seconds = now.getSeconds().toString().padStart(2, '0');
+      
+      document.getElementById('currentTime').innerHTML = `
+        <div class="main-time">
+          <span class="time-part-black">${hours}</span>
+          <span class="colon">:</span>
+          <span class="time-part-gray">${minutes}</span>
+          <span class="colon">:</span>
+          <span class="time-part-lightgray">${seconds}</span>
+        </div>
+      `;
+      
+      const diffStart = Math.floor((now - startTime) / 1000);
+      const diffEnd = Math.floor((endTime - now) / 1000);
+
+      showColon = !showColon;
+
+      if (now < startTime) {
+        const secondsUntilStart = Math.floor((startTime - now) / 1000);
+        document.getElementById('status').innerHTML = `<div style="text-align: center;">Début de l'épreuve dans : <span style="color: #228be6; font-weight: bold;">${formatDuration(secondsUntilStart, true)}</span></div>`;
+        document.getElementById('remaining').innerHTML = '';
+        return;
+      }
+
+      if (now < new Date(startTime.getTime() + logeMinutes * 60000)) {
+        const logeEnd = new Date(startTime.getTime() + logeMinutes * 60000);
+        document.getElementById('status').innerHTML = `<div style="text-align: center;">Pas de sorties autorisées avant ${logeEnd.getHours()}h${logeEnd.getMinutes().toString().padStart(2, '0')} (mise en loge)</div>`;
+      } else {
+        document.getElementById('status').innerHTML = '';
+      }
+
+      if (diffEnd > 10) {
+        document.getElementById('remaining').innerHTML = `<div style="text-align: center;"><span style="color: #228be6; font-weight: bold;">Temps restant : ${formatDuration(diffEnd)}</span></div>`;
+      } else if (diffEnd > 0) {
+        document.getElementById('remaining').innerHTML = `<div style="text-align: center;"><span style="color: #228be6; font-weight: bold;">Fin dans : ${diffEnd} secondes</span></div>`;
+      } else {
+        const overtime = Math.abs(diffEnd);
+        document.getElementById('remaining').innerHTML = `<div style="text-align: center;"><span style="color: red; font-weight: bold;">L'épreuve est terminée</span><span class="overtime">Temps dépassé de : ${formatDuration(overtime, true)}</span></div>`;
+        exitFullScreen();
+      }
+    }
+
+    function formatTime(date, remainingSeconds) {
+      const h = date.getHours().toString().padStart(2, '0');
+      const m = date.getMinutes().toString().padStart(2, '0');
+      const s = date.getSeconds().toString().padStart(2, '0');
+      const colon = showColon ? '<span class="colon">:</span>' : '<span class="colon" style="opacity:0.3">:</span>';
+
+      if (remainingSeconds <= 600) {
+        return `<span class="time-part-black">${h}</span>${colon}<span class="time-part-gray">${m}</span>${colon}<span class="time-part-lightgray">${s}</span>`;
+      } else {
+        return `<span class="time-part-black">${h}</span>${colon}<span class="time-part-gray">${m}</span>`;
+      }
+    }
+
+    function formatDuration(seconds, omitHours = false) {
+      const m = Math.floor((seconds % 3600) / 60);
+      const s = seconds % 60;
+      return omitHours ? `${m}mn ${s}s` : `${Math.floor(seconds / 3600)}h ${m}mn ${s}s`;
+    }
+
+    // Initialiser l'année en cours au chargement de la page
+    document.addEventListener('DOMContentLoaded', function() {
+      const currentYear = new Date().getFullYear();
+      document.getElementById('bannerSession').textContent = currentYear;
+    });
+  </script>
+</body>
+</html>
