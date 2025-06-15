@@ -209,6 +209,10 @@
       text-align: center;
       font-size: 0.8rem;
       color: #888;
+      display: none;
+    }
+    footer.visible {
+      display: block;
     }
     .button-container {
       margin-top: 2rem;
@@ -259,7 +263,7 @@
     <div class="remaining" id="remaining"></div>
   </div>
 
-  <footer>
+  <footer id="footer">
      © Codé en grande partie par l'IA, sous la direction fonctionnelle et artistique des prompts d'Olivier de Sérignan (ex-développeur peut-être... ;-)
   </footer>
 
@@ -361,6 +365,7 @@
 
       document.getElementById('inputForm').style.display = 'none';
       document.getElementById('clockDisplay').classList.add('visible');
+      document.getElementById('footer').classList.add('visible');
 
       interval = setInterval(updateClock, 1000);
     }
