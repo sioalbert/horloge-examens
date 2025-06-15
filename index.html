@@ -264,7 +264,7 @@
     <div class="remaining" id="remaining"></div>
   </div>
 
-  <footer id="footer">
+ <footer id="footer">
      © Codé en grande partie par l'IA, sous la direction fonctionnelle et artistique des prompts d'Olivier de Sérignan (ex-développeur peut-être... ;-)
   </footer>
 
@@ -358,15 +358,47 @@
       endTime = new Date(now);
       endTime.setHours(fH, fM, 0);
 
-      document.getElementById('bannerExamen').textContent = examen;
-      document.getElementById('bannerSection').textContent = section;
-      document.getElementById('bannerEpreuve').textContent = epreuve;
-      document.getElementById('bannerMatiere').textContent = matiere;
-      document.getElementById('bannerSession').textContent = now.getFullYear();
+      // Vérifier si au moins une information est saisie
+      const hasAnyInfo = examen || section || epreuve || matiere;
+
+      if (hasAnyInfo) {
+        // Afficher uniquement les informations saisies
+        if (examen) {
+          document.getElementById('bannerExamen').textContent = examen;
+          document.getElementById('bannerExamen').parentElement.style.display = 'flex';
+        } else {
+          document.getElementById('bannerExamen').parentElement.style.display = 'none';
+        }
+
+        if (section) {
+          document.getElementById('bannerSection').textContent = section;
+          document.getElementById('bannerSection').parentElement.style.display = 'flex';
+        } else {
+          document.getElementById('bannerSection').parentElement.style.display = 'none';
+        }
+
+        if (epreuve) {
+          document.getElementById('bannerEpreuve').textContent = epreuve;
+          document.getElementById('bannerEpreuve').parentElement.style.display = 'flex';
+        } else {
+          document.getElementById('bannerEpreuve').parentElement.style.display = 'none';
+        }
+
+        if (matiere) {
+          document.getElementById('bannerMatiere').textContent = matiere;
+          document.getElementById('bannerMatiere').parentElement.style.display = 'flex';
+        } else {
+          document.getElementById('bannerMatiere').parentElement.style.display = 'none';
+        }
+
+        document.getElementById('bannerSession').textContent = now.getFullYear();
+        document.querySelector('.banner').style.display = 'block';
+      } else {
+        document.querySelector('.banner').style.display = 'none';
+      }
 
       document.getElementById('inputForm').style.display = 'none';
       document.getElementById('clockDisplay').classList.add('visible');
-      document.getElementById('footer').classList.add('visible');
 
       interval = setInterval(updateClock, 1000);
     }
