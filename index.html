@@ -88,6 +88,10 @@
       text-align: left;
       border: 1px solid #ccc;
       margin-bottom: 2rem;
+      display: none;
+    }
+    .banner.visible {
+      display: block;
     }
     .banner-grid {
       display: grid;
@@ -358,7 +362,7 @@
       endTime = new Date(now);
       endTime.setHours(fH, fM, 0);
 
-      // Vérifier si au moins une information est saisie
+      // Vérifier si au moins une information textuelle est saisie
       const hasAnyInfo = examen || section || epreuve || matiere;
 
       if (hasAnyInfo) {
@@ -391,10 +395,12 @@
           document.getElementById('bannerMatiere').parentElement.style.display = 'none';
         }
 
+        // Toujours afficher l'année de session quand le bandeau est visible
         document.getElementById('bannerSession').textContent = now.getFullYear();
-        document.querySelector('.banner').style.display = 'block';
+        document.getElementById('bannerSession').parentElement.style.display = 'flex';
+        document.querySelector('.banner').classList.add('visible');
       } else {
-        document.querySelector('.banner').style.display = 'none';
+        document.querySelector('.banner').classList.remove('visible');
       }
 
       document.getElementById('inputForm').style.display = 'none';
