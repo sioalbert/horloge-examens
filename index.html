@@ -151,11 +151,13 @@
       display: inline-flex;
       align-items: center;
       width: 4.8em;
+      justify-content: center;
     }
     .seconds-container {
       display: inline-flex;
       align-items: center;
       margin-left: 0.1em;
+      width: 2em;
     }
     .time-part-black, .time-part-gray, .time-part-lightgray {
       font-family: 'Montserrat', sans-serif;
@@ -435,20 +437,24 @@
       const minutes = now.getMinutes().toString().padStart(2, '0');
       const seconds = now.getSeconds().toString().padStart(2, '0');
       
+      const diffEnd = Math.floor((endTime - now) / 1000);
+      const showSeconds = diffEnd <= 600; // Afficher les secondes si moins de 10 minutes restantes
+      
       document.getElementById('currentTime').innerHTML = `
         <div class="main-time">
           <span class="time-part-black">${hours}</span>
           <span class="colon">:</span>
           <span class="time-part-gray">${minutes}</span>
-          <span class="colon">:</span>
+          ${showSeconds ? `<span class="colon">:</span>` : ''}
         </div>
+        ${showSeconds ? `
         <div class="seconds-container">
           <span class="time-part-lightgray">${seconds}</span>
         </div>
+        ` : ''}
       `;
       
       const diffStart = Math.floor((now - startTime) / 1000);
-      const diffEnd = Math.floor((endTime - now) / 1000);
 
       showColon = !showColon;
 
