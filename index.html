@@ -132,7 +132,8 @@
       background-color: white;
       padding: 1rem;
       border-radius: 0px;
-      width: 800px;
+      width: 100%;
+      max-width: 1000px;
       margin: 0 auto;
     }
     .clock {
@@ -145,7 +146,6 @@
       letter-spacing: 0.05em;
       color: #2e2e2e;
       width: 100%;
-      min-width: 700px;
     }
     .main-time {
       display: inline-flex;
@@ -235,7 +235,7 @@
       <div><label>Section / Spécialité / Série : <input id="section" placeholder="Ex: Option SLAM" required /></label></div>
     </div>
     <div class="form-row">
-      <div><label>Epreuve : <input id="epreuve" placeholder="Ex: E7" required /></label></div>
+      <div><label>Épreuve / Repère : <input id="epreuve" placeholder="Ex: E7" required /></label></div>
       <div><label>Matière : <input id="matiere" placeholder="Ex: Cybersécurité" required /></label></div>
     </div>
     <div class="form-row">
@@ -258,7 +258,7 @@
       <div class="banner-grid">
         <div class="banner-col"><span class="label">Concours / Examen :</span><span class="value" id="bannerExamen"></span></div>
         <div class="banner-col"><span class="label">Section / Spécialité / Série :</span><span class="value" id="bannerSection"></span></div>
-        <div class="banner-col"><span class="label">Epreuve :</span><span class="value" id="bannerEpreuve"></span></div>
+        <div class="banner-col"><span class="label">Épreuve / Repère :</span><span class="value" id="bannerEpreuve"></span></div>
         <div class="banner-col"><span class="label">Matière :</span><span class="value" id="bannerMatiere"></span></div>
         <div class="banner-col session-col"><span class="label">Session :</span><span class="value" id="bannerSession"></span></div>
       </div>
@@ -435,28 +435,19 @@
       const now = new Date();
       const hours = now.getHours().toString().padStart(2, '0');
       const minutes = now.getMinutes().toString().padStart(2, '0');
-      const seconds = now.getSeconds().toString().padStart(2, '0');
       
-      const diffEnd = Math.floor((endTime - now) / 1000);
-      const showSeconds = diffEnd <= 600; // Afficher les secondes si moins de 10 minutes restantes
+      showColon = !showColon;
       
       document.getElementById('currentTime').innerHTML = `
         <div class="main-time">
           <span class="time-part-black">${hours}</span>
-          <span class="colon">:</span>
+          <span class="colon" style="opacity: ${showColon ? '1' : '0.3'}">:</span>
           <span class="time-part-gray">${minutes}</span>
-          ${showSeconds ? `<span class="colon">:</span>` : ''}
         </div>
-        ${showSeconds ? `
-        <div class="seconds-container">
-          <span class="time-part-lightgray">${seconds}</span>
-        </div>
-        ` : ''}
       `;
       
       const diffStart = Math.floor((now - startTime) / 1000);
-
-      showColon = !showColon;
+      const diffEnd = Math.floor((endTime - now) / 1000);
 
       if (now < startTime) {
         const secondsUntilStart = Math.floor((startTime - now) / 1000);
